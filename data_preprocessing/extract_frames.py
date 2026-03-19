@@ -1,21 +1,30 @@
 import cv2
 import os
 
-video_path = "raw_data/test_1_video.mp4"
+input_folder = "../data/raw_data"
 output_folder = "frames"
 
 os.makedirs(output_folder, exist_ok=True)
 
-cap = cv2.VideoCapture(video_path)
-count = 0
+frame_skip = 5
 
-while True:
-    ret, frame = cap.read()
-    if not ret:
-        break
+for video_file in os.listdir(input_folder):
+    video_path = os.path.join(input_folder, video_file)
 
-    cv2.imwrite(f"{output_folder}/frame_{count}.jpg", frame)
-    count += 1
+    cap = cv2.VideoCapture(video_path)
+    count = 0
 
-cap.release()
-print("Frames extracted successfully!")
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        if count % frame_skip == 0:
+            filename = f"{video_file}_frame_{count}.jpg"
+            cv2.imwrite(os.path.join(output_folder, filename), frame)
+
+        count += 1
+
+    cap.release()
+
+print("All videos processed!")
